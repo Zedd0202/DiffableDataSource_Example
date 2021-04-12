@@ -8,6 +8,12 @@
 import UIKit
 import Foundation
 
+struct DJ: Hashable {
+    
+    let id = UUID()
+    var name: String
+}
+
 class ViewController: UIViewController {
     
     enum Section: CaseIterable {
@@ -16,10 +22,14 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var arr = ["Zedd", "Alan Walker", "David Guetta", "Avicii", "Marshmello", "Steve Aoki", "R3HAB", "Armin van Buuren", "Skrillex", "Illenium", "The Chainsmokers", "Don Diablo", "Afrojack", "Tiesto", "KSHMR", "DJ Snake", "Kygo", "Galantis", "Major Lazer", "Vicetone"
+    var nameArr = ["Zedd", "Zedd", "Alan Walker", "David Guetta", "Avicii", "Marshmello", "Steve Aoki", "R3HAB", "Armin van Buuren", "Skrillex", "Illenium", "The Chainsmokers", "Don Diablo", "Afrojack", "Tiesto", "KSHMR", "DJ Snake", "Kygo", "Galantis", "Major Lazer", "Vicetone"
     ]
+    
+    lazy var arr: [DJ] = {
+        return self.nameArr.map { DJ(name: $0) }
+    }()
         
-    var dataSource: UICollectionViewDiffableDataSource<Section, String>!
+    var dataSource: UICollectionViewDiffableDataSource<Section, DJ>!
     
     var isFiltering: Bool {
         let searchController = self.navigationItem.searchController
@@ -48,30 +58,29 @@ class ViewController: UIViewController {
         // MARK: - Way 1
         self.collectionView.register(DJCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         self.dataSource =
-            UICollectionViewDiffableDataSource<Section, String>(collectionView: self.collectionView) { (collectionView, indexPath, dj) -> UICollectionViewCell? in
+            UICollectionViewDiffableDataSource<Section, DJ>(collectionView: self.collectionView) { (collectionView, indexPath, person) -> UICollectionViewCell? in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? DJCollectionViewCell else { preconditionFailure() }
-            cell.configure(text: dj)
+                cell.configure(text: person.name)
             return cell
         }
         
         // MARK: - Way 2
-        /*
-        let cellRegistration = UICollectionView.CellRegistration
-        <DJCollectionViewCell, String> { (cell, indexPath, dj) in
-            cell.configure(text: dj)
-        }
         
-        self.dataSource = UICollectionViewDiffableDataSource<Section, String>(collectionView: self.collectionView) {
-            (collectionView, indexPath, dj) -> UICollectionViewCell? in
-            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: dj)
-        }
-        */
+//        let cellRegistration = UICollectionView.CellRegistration
+//        <DJCollectionViewCell, DJ> { (cell, indexPath, dj) in
+//            cell.configure(text: dj.name)
+//        }
+//
+//        self.dataSource = UICollectionViewDiffableDataSource<Section, DJ>(collectionView: self.collectionView) {
+//            (collectionView, indexPath, dj) -> UICollectionViewCell? in
+//            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: dj)
+//        }
     }
 
     func performQuery(with filter: String?) {
-        let filtered = self.arr.filter { $0.hasPrefix(filter ?? "") }
+        let filtered = self.nameArr.filter { $0.hasPrefix(filter ?? "") }.map { DJ(name: $0) }
 
-        var snapshot = NSDiffableDataSourceSnapshot<Section, String>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, DJ>()
         snapshot.appendSections([.main])
         snapshot.appendItems(filtered)
         self.dataSource.apply(snapshot, animatingDifferences: true)
