@@ -22,7 +22,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var nameArr = ["Zedd", "Zedd", "Alan Walker", "David Guetta", "Avicii", "Marshmello", "Steve Aoki", "R3HAB", "Armin van Buuren", "Skrillex", "Illenium", "The Chainsmokers", "Don Diablo", "Afrojack", "Tiesto", "KSHMR", "DJ Snake", "Kygo", "Galantis", "Major Lazer", "Vicetone"
+    var nameArr = ["Zedd", "Alan Walker", "David Guetta", "Avicii", "Marshmello", "Steve Aoki", "R3HAB", "Armin van Buuren", "Skrillex", "Illenium", "The Chainsmokers", "Don Diablo", "Zedd", "Afrojack", "Tiesto", "KSHMR", "DJ Snake", "Kygo", "Galantis", "Major Lazer", "Vicetone"
     ]
     
     lazy var arr: [DJ] = {
@@ -78,7 +78,7 @@ class ViewController: UIViewController {
     }
 
     func performQuery(with filter: String?) {
-        let filtered = self.nameArr.filter { $0.hasPrefix(filter ?? "") }.map { DJ(name: $0) }
+        let filtered = self.arr.filter { $0.name.hasPrefix(filter ?? "") }
 
         var snapshot = NSDiffableDataSourceSnapshot<Section, DJ>()
         snapshot.appendSections([.main])
